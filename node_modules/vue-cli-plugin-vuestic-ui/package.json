@@ -1,0 +1,18 @@
+{
+  "name": "vue-cli-plugin-vuestic-ui",
+  "version": "1.0.11",
+  "description": "Vuestic UI plugin for Vue CLI v4+",
+  "homepage": "https://vuestic.dev",
+  "main": "index.js",
+  "repository": "https://github.com/epicmaxco/vuestic-ui",
+  "keywords": [
+    "vuestic",
+    "plugin",
+    "vue",
+    "cli"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/epicmaxco/vuestic-ui/issues"
+  }
+}
