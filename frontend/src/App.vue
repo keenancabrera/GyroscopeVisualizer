@@ -17,11 +17,13 @@
                   :min="parameter.min" 
                   :max="parameter.max" 
                   :thumb-label="'always'"
-                  :label = 'parameter.symbol + " :"'
                   v-model="parameter.value" 
                   :key="key"
                   class="mt-2"
                   >
+                  <template v-slot:prepend>
+                    {{ parameter.symbol }} :
+                  </template>
                 </v-slider>                
               </v-card-text>
             </v-card>
@@ -44,13 +46,13 @@
                   class="mt-2"
                   >
                   <template v-slot:prepend>
-                    {{ stateVariable.symbol }} <sub v-if = "stateVariable.subscript"> {{stateVariable.subscript}} </sub> :
+                    {{ stateVariable.symbol }} <sub v-if = "stateVariable.subscript">{{stateVariable.subscript}}</sub> :
                   </template>
                 </v-slider>                
               </v-card-text>
             </v-card>
 
-            <v-btn variant="outlined" class="align-self-center full-width" @click="runSolver()">
+            <v-btn block variant="outlined" class="mt-2 " @click="runSolver()">
               Simulate
             </v-btn>
 
@@ -80,14 +82,14 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
     },
     data: () => ({
       parameters : {
-        "l" : {value: 5, min: 1, max: 10, symbol: '𝑙'},
-        "a" : {value: 2, min: 1, max: 5, symbol: '𝑎'},
-        "h" : {value: 0.5, min: 0.1, max: 1, symbol: 'ℎ'},
-        "g" : {value: -9.8, min: -10, max: 0, symbol : '𝑔'},
+        "l" : {value: 5, min: 1, max: 10, symbol: 'l'},
+        "a" : {value: 2, min: 1, max: 5, symbol: 'a'},
+        "h" : {value: 0.5, min: 0.1, max: 1, symbol: 'h'},
+        "g" : {value: 9.8, min: 0, max: 10, symbol : 'g'},
       },
       solverParameters : {
           "stepSize" : {value: 1/240},
-          "numSteps" : {value: 1200}, // total animation time in seconds is stepSize * numSteps
+          "numSteps" : {value: 240 * 15}, // total animation time in seconds is stepSize * numSteps
           't0' : {value: 0}
       },
       animationParameters : {
@@ -103,7 +105,7 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
           "psi" : {value: 0, min: 0, max: 6.28, symbol: '𝛙'},
           "thetaVel": {value: 0, min: 0, max: 12, symbol: 'ω', subscript: '𝛉'},
           "phiVel": {value: 0, min: 0, max: 12, symbol: 'ω', subscript: '𝜙'},
-          "psiVel": {value: 0, min: 0, max: 30, symbol: 'ω', subscript: '𝛙'}
+          "psiVel": {value: 0, min: 0, max: 100, symbol: 'ω', subscript: '𝛙'}
       },
       solution: []
     }),
@@ -127,12 +129,13 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
           psi = theta
           
           let phiVel = pPhi / this.parameters.l.value**2 
-          let thetaVel = (pTheta - (pPsi * Math.cos(phi)))/(this.parameters.a.value**2 * Math.sin(phi)**2) 
-          let psiVel = (pPsi/this.parameters.a.value**2) - thetaVel * Math.cos(phi) 
+          let thetaVel = (pTheta - (pPsi * Math.cos(phi)))/(this.parameters.l.value**2 * Math.sin(phi)**2) 
+          let psiVel = (pPsi/(this.parameters.a.value**2/4)) - thetaVel * Math.cos(phi) 
 
           let pThetaDot = 0 
-          let pPhiDot = (this.parameters.l.value**2 - this.parameters.a.value**2)* Math.sin(phi) * Math.cos(phi) * thetaVel**2 - (this.parameters.g.value*this.parameters.l.value - this.parameters.a.value**2 * psiVel * thetaVel) * Math.sin(phi)
+          let pPhiDot = (this.parameters.l.value**2 + (this.parameters.a.value**2/4))* Math.sin(phi) * Math.cos(phi) * thetaVel**2 + (this.parameters.g.value*this.parameters.l.value - (this.parameters.a.value**2/4) * psiVel * thetaVel) * Math.sin(phi)
           let pPsiDot = 0
+
           return [thetaVel, phiVel, psiVel, pThetaDot, pPhiDot, pPsiDot];
       },
       rungeKutta(engine, state, t0, stepSize, numSteps) {
@@ -190,9 +193,9 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
           return {x:x, y:y, z:z}
       },
       getGeneralizedMomenta(){
-        let pTheta = (this.parameters.l.value**2 * Math.sin(this.initialState.phi.value)**2 + this.parameters.a.value**2 * Math.cos(this.initialState.phi.value)**2)*this.initialState.thetaVel.value + this.parameters.a.value**2 * this.initialState.psiVel.value * Math.cos(this.initialState.phi.value)
+        let pTheta = (this.parameters.l.value**2 * Math.sin(this.initialState.phi.value)**2 + (this.parameters.a.value**2/4) * Math.cos(this.initialState.phi.value)**2)*this.initialState.thetaVel.value + (this.parameters.a.value**2/4) * this.initialState.psiVel.value * Math.cos(this.initialState.phi.value)
         let pPhi = this.parameters.l.value**2 * this.initialState.phiVel.value
-        let pPsi = this.parameters.a.value**2 * (this.initialState.thetaVel.value * Math.cos(this.initialState.phi.value) + this.initialState.psiVel.value)
+        let pPsi = (this.parameters.a.value**2/4) * (this.initialState.thetaVel.value * Math.cos(this.initialState.phi.value) + this.initialState.psiVel.value)
 
         return {pTheta:pTheta, pPhi:pPhi, pPsi:pPsi}
       }

@@ -1,15 +1,16 @@
 import { createCamera } from './components/camera.js';
-import { Cylinder } from './components/cylinder.js';
+import { CylinderHalf } from './components/cylinderHalf.js';
 import { createScene } from './components/scene.js';
 import { Rod } from './components/rod.js'
 import { createLights } from './components/lights.js'
 import { createFloor } from './components/floor.js'
 
 import { createRenderer } from './systems/renderer.js';
-import * as THREE from 'three';
 import { Loop } from './systems/Loop.js'
 import { createControls } from './systems/OrbitControls.js'
 import { Resizer } from './systems/Resizer.js';
+
+// import * as THREE from 'three'; // For use with axes and light helpers
 
 // These variables are module-scoped: we cannot access them
 // from outside the module
@@ -42,20 +43,20 @@ class gyroscopeAnimation {
 
 
     // Add elements
-    this.light = createLights(this.parameters)
+    ;[this.spotLight, this.hemisphereLight] = createLights(this.parameters)
     this.floor = createFloor(this.parameters)
-    this.cylinderHalf = new Cylinder(this.state, parameters, 0, "blue")
-    this.cylinderHalf2 = new Cylinder(this.state, parameters, Math.PI, "red")
+    this.blueHalf = new CylinderHalf(this.state, parameters, 0, "cornflowerblue")
+    this.redHalf = new CylinderHalf(this.state, parameters, Math.PI, "crimson")
     this.rod = new Rod(this.state, this.parameters)
-    loop.updatables.push(this.cylinderHalf)
-    loop.updatables.push(this.cylinderHalf2)
+    loop.updatables.push(this.blueHalf)
+    loop.updatables.push(this.redHalf)
     loop.updatables.push(this.rod)
 
-    this.axesHelper = new THREE.AxesHelper(3/2 * this.parameters.l.value)
-    this.spotLightHelper = new THREE.SpotLightHelper(this.light)
+    // this.axesHelper = new THREE.AxesHelper(3/2 * this.parameters.l.value)
+    // this.spotLightHelper = new THREE.SpotLightHelper(this.light)
 
     // Update cylinder position and orientation
-    scene.add(this.cylinderHalf.object,this.cylinderHalf2.object, this.rod.object, this.light, this.floor);
+    scene.add(this.blueHalf.object,this.redHalf.object, this.rod.object, this.spotLight, this.hemisphereLight, this.floor);
     loop.start(this.state)
   }
 
@@ -70,17 +71,17 @@ class gyroscopeAnimation {
 
   updateParameters(parameters){
     this.parameters = parameters
-    this.cylinderHalf.changeParameters(this.parameters)
-    this.cylinderHalf2.changeParameters(this.parameters)
-    this.render()
+    loop.isPaused = true
+    this.blueHalf.changeParameters(this.parameters)
+    this.redHalf.changeParameters(this.parameters)
   }
 
   updateState(state){
     this.state = state
-    this.cylinderHalf.tick(this.state)
-    this.cylinderHalf2.tick(this.state)
+    loop.isPaused = true
+    this.blueHalf.tick(this.state)
+    this.redHalf.tick(this.state)
     this.rod.tick(this.state)
-    this.render()
   }
 }
 

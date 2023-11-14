@@ -21,7 +21,7 @@ class Loop {
     let lenSolution = this.solution.length
     clock.getDelta()
     this.renderer.setAnimationLoop(() => {
-      if(this.i < lenSolution){
+      if(this.i < lenSolution && this.isPaused == false){
         this.tick()
       }
       if (this.i >= lenSolution && this.isPaused == false){
