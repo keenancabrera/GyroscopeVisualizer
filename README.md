@@ -1,5 +1,5 @@
 # Gyroscope Visualizer
-A webapp that simulates the motion of a symmetric gyroscope. Written using Vue, Vuetify, and THREE.js.
+A webapp that simulates the motion of a symmetric gyroscope. Written using Vue and THREE.js.
 
 ## Interface 
 View in [Github Pages](https://keenancabrera.github.io/GyroscopeVisualizer/)
@@ -15,9 +15,9 @@ SI units are used throughout. A brief explanation of each of the GUI elements:
 * g (meters/second ^ 2) : the strength of gravity
 
 ##### State Variables
-* 𝛉 (radians) : The polar angle that describes the position of the system in the X-Y (horizontal) plane.
+* 𝛉 (radians) : The polar angle that describes the position of the system in the X-Y (horizontal) plane
 * 𝜙 (radians) : The azimuthal angle that describes the systems' position relative to the Z axis (vertical)
-* 𝛙 (radians) : The angle that describes the rotation of the cylinder along the axis of the rod.
+* 𝛙 (radians) : The angle that describes the rotation of the cylinder along the axis of the rod
 * ω<sub>𝛉</sub> (radians/second): Angular velocity corresponding to 𝛉
 * ω<sub>𝜙</sub> (radians/second): Angular velocity corresponding to 𝜙
 * ω<sub>𝛙</sub> (radians/second): Angular velocity corresponding to 𝛙
