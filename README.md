@@ -1,8 +1,7 @@
 # Gyroscope Visualizer
 A webapp that simulates the motion of a symmetric gyroscope. Written using Vue and THREE.js.
 
-## Interface 
-View in [Github Pages](https://keenancabrera.github.io/GyroscopeVisualizer/)
+## Interface (view [here](https://keenancabrera.github.io/GyroscopeVisualizer/) on GitHub Pages)
 
 <img width="1358" alt="Screenshot 2023-11-15 at 8 53 41 AM" src="https://github.com/keenancabrera/GyroscopeVisualizer/assets/148273199/bf7b5036-850b-4721-a336-c09091d674f4">
 
