@@ -101,7 +101,7 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
       },
       initialState : {
           "theta" : {value: 0, min: 0, max: 6.28, symbol: '𝛉'},
-          "phi" : {value: 0.2, min: 0, max: 6.28, symbol: '𝜙'},
+          "phi" : {value: 0.2, min: 0.01, max: 6.28, symbol: '𝜙'},
           "psi" : {value: 0, min: 0, max: 6.28, symbol: '𝛙'},
           "thetaVel": {value: 0, min: 0, max: 12, symbol: 'ω', subscript: '𝛉'},
           "phiVel": {value: 0, min: 0, max: 12, symbol: 'ω', subscript: '𝜙'},
