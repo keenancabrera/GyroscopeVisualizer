@@ -154,8 +154,6 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
         //let throttleSolver = _.throttle(this.runSolver(this.lastSolverStep['t0'], this.lastSolverStep['state'], false), 1000)
         if(newValue.length < this.solverParameters.numSteps.value / 2 && this.isSolving == true){
           this.runSolver(this.lastSolverStep['t0'], this.lastSolverStep['state'], this.solverParameters.numSteps.value / 10, false)
-          console.log("RECOMPUTING")
-          console.log("Len of array is : " + newValue.length )
         }
       },
       deep: true
