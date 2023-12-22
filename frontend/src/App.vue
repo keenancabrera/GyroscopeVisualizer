@@ -57,6 +57,7 @@
                 <v-col>
                   <v-btn 
                         block
+                        color = green
                         variant="outlined" 
                         @click="runSolver(
                           this.solverParameters.t0.value,
@@ -70,6 +71,7 @@
                 <v-col>
                   <v-btn
                         block
+                        color = red
                         variant="outlined" 
                         @click="isSolving = false"
                       >

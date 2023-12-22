@@ -57,7 +57,7 @@ class gyroscopeAnimation {
 
     // Update cylinder position and orientation
     scene.add(this.blueHalf.object,this.redHalf.object, this.rod.object, this.spotLight, this.hemisphereLight, this.floor);
-    loop.start(this.state)
+    loop.start(this.state, true)
   }
 
   render() { // used to render a single frame

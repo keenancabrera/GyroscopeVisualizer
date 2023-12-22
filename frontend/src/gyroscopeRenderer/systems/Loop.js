@@ -10,21 +10,19 @@ class Loop {
     this.controls = controls
     this.updatables = []
     this.solution = solution
-    this.i = 0
     this.isPaused = false
     this.stepSize = 1/240
   }
 
-   start(state) {
-    this.i = 0
-    this.isPaused = false
-    let lenSolution = this.solution.length
+   start(state, paused = false) {
+    this.isPaused = paused
+
     clock.getDelta()
     this.renderer.setAnimationLoop(() => {
-      if(this.i < lenSolution && this.isPaused == false){
+      if(this.isPaused == false){
         this.tick()
       }
-      if (this.i >= lenSolution && this.isPaused == false){
+      else {
         this.Pause(state)
       }
       this.controls.update()
@@ -33,7 +31,6 @@ class Loop {
   }
 
   Pause(state) {
-    // this.renderer.setAnimationLoop(null);
     this.isPaused = true
     for(const object of this.updatables){
       object.tick(state)
