@@ -21,4 +21,4 @@ SI units are used throughout. A brief explanation of each of the GUI elements:
 * ω<sub>𝜙</sub> (radians/second): Angular velocity corresponding to 𝜙
 * ω<sub>𝛙</sub> (radians/second): Angular velocity corresponding to 𝛙
 
-Clicking the "Simulate" button will trigger a 15 second animation of the gyroscopes' motion based on your choice of input variables. Once the 15 seconds are completed, the animation will revert back to your initial state. Changing the parameters or state variables mid-simulation will also stop the simulation.
+Clicking "START" will generate an animation of the gyroscopes' motion that runs until you click "STOP" button or change any parameters/state variables. Stopping the animation will revert the gyroscope back to its initial state.
