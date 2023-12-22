@@ -21,7 +21,7 @@ let loop;
 let controls
 
 class gyroscopeAnimation {
-  constructor(container, parameters, state) {
+  constructor(container, parameters, state, solution) {
     this.parameters = parameters // Affects parameters from parent component
     this.state = state // Affects initialState from parent component
 
@@ -39,7 +39,7 @@ class gyroscopeAnimation {
     }    
     controls = createControls(camera, renderer.domElement)
     controls.listenToKeyEvents(container)
-    loop = new Loop(camera, scene, renderer, controls)
+    loop = new Loop(camera, scene, renderer, controls, solution)
 
 
     // Add elements
@@ -82,6 +82,11 @@ class gyroscopeAnimation {
     this.blueHalf.tick(this.state)
     this.redHalf.tick(this.state)
     this.rod.tick(this.state)
+  }
+
+  pause(state){
+    this.state = state
+    loop.isPaused = true
   }
 }
 

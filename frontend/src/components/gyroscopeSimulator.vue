@@ -10,7 +10,8 @@ export default {
   props: {
     solution: Object,
     parameters: Object,
-    state: Object
+    state: Object,
+    isSolving: Boolean
   },
   watch: {
     solution : {
@@ -31,6 +32,13 @@ export default {
         this.gyroscopeAnimation.updateState((this.state))
       },
       deep : true
+    },
+    isSolving : {
+      handler(){
+        if(this.isSolving == false){
+          this.gyroscopeAnimation.updateState((this.state))
+        }
+      }
     }
   },
   data() {
@@ -38,7 +46,7 @@ export default {
     }
   },
   mounted() { 
-    this.gyroscopeAnimation = new gyroscopeAnimation(this.$refs.sceneContainer, (this.parameters), (this.state))
+    this.gyroscopeAnimation = new gyroscopeAnimation(this.$refs.sceneContainer, (this.parameters), (this.state), (this.solution))
     this.gyroscopeAnimation.render()
   },
 };

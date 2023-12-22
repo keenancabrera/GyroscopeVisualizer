@@ -3,13 +3,13 @@ import { Clock } from "three";
 const clock = new Clock()
 
 class Loop {
-  constructor(camera, scene, renderer, controls) {
+  constructor(camera, scene, renderer, controls, solution) {
     this.camera = camera
     this.scene = scene
     this.renderer = renderer
     this.controls = controls
     this.updatables = []
-    this.solution = []
+    this.solution = solution
     this.i = 0
     this.isPaused = false
     this.stepSize = 1/240
@@ -44,9 +44,14 @@ class Loop {
   tick() {
     let delta = clock.getDelta()
     for (const object of this.updatables){
-      object.tick(this.solution[this.i])
+      object.tick(this.solution[0])
     }
-    this.i += Math.round(delta/this.stepSize)
+
+    for(let i = 0; i <= Math.round(delta/this.stepSize); i++){
+      this.solution.shift()
+    }
+
+    // console.log(this.solution.length)
   }
 }
 
