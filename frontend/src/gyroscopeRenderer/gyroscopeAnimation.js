@@ -71,14 +71,14 @@ class gyroscopeAnimation {
 
   updateParameters(parameters){
     this.parameters = parameters
-    loop.isPaused = true
     this.blueHalf.changeParameters(this.parameters)
     this.redHalf.changeParameters(this.parameters)
+    loop.start(this.state, true)
   }
 
   updateState(state){
     this.state = state
-    loop.isPaused = true
+    loop.start(state, true)
     this.blueHalf.tick(this.state)
     this.redHalf.tick(this.state)
     this.rod.tick(this.state)
@@ -86,7 +86,7 @@ class gyroscopeAnimation {
 
   pause(state){
     this.state = state
-    loop.isPaused = true
+    loop.start(state, true)
   }
 }
 
