@@ -52,15 +52,40 @@
               </v-card-text>
             </v-card>
 
-            <v-btn block variant="outlined" class="mt-2 " @click="runSolver()">
-              Simulate
-            </v-btn>
+            <v-container>
+              <v-row>
+                <v-col>
+                  <v-btn 
+                        block
+                        color = green
+                        variant="outlined" 
+                        @click="runSolver(
+                          this.solverParameters.t0.value,
+                          [this.computedState.theta, this.computedState.phi, this.computedState.psi, this.computedState.pTheta, this.computedState.pPhi, this.computedState.pPsi],
+                          this.solverParameters.numSteps.value
+                        )"
+                      >
+                        START
+                      </v-btn>
+                </v-col>
+                <v-col>
+                  <v-btn
+                        block
+                        color = red
+                        variant="outlined" 
+                        @click="isSolving = false"
+                      >
+                    STOP
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
 
           </v-col>
 
           <v-col cols="8">
             <v-sheet rounded="lg">
-              <gyroscopeSimulator :solution="solution" :parameters="parameters" :state="computedState"></gyroscopeSimulator>
+              <gyroscopeSimulator :solution="solution" :parameters="parameters" :state="computedState" :isSolving = "isSolving"></gyroscopeSimulator>
             </v-sheet>
           </v-col>
         </v-row>
@@ -72,6 +97,7 @@
 <script>
 // import { pushScopeId } from 'vue'
 import gyroscopeSimulator from './components/gyroscopeSimulator'
+// import _ from 'lodash'
 // import { popScopeId } from 'vue'
 // import { ref, onMounted } from 'vue'
 
@@ -89,7 +115,7 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
       },
       solverParameters : {
           "stepSize" : {value: 1/240},
-          "numSteps" : {value: 240 * 15}, // total animation time in seconds is stepSize * numSteps
+          "numSteps" : {value: 240 * 5}, // total animation time in seconds is stepSize * numSteps
           't0' : {value: 0}
       },
       animationParameters : {
@@ -107,7 +133,9 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
           "phiVel": {value: 0, min: 0, max: 12, symbol: 'ω', subscript: '𝜙'},
           "psiVel": {value: 0, min: 0, max: 100, symbol: 'ω', subscript: '𝛙'}
       },
-      solution: []
+      solution: [],
+      isSolving : false, // boolean to track whether or not simulation is running.
+      lastSolverStep : null // saves last solver step for use in generating continuous solution
     }),
     computed : {
       computedState() {
@@ -119,6 +147,17 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
         Object.assign(state, this.getGeneralizedMomenta())
         return state
       }
+    },
+    watch: {
+    solution: {
+      handler(newValue) {
+        //let throttleSolver = _.throttle(this.runSolver(this.lastSolverStep['t0'], this.lastSolverStep['state'], false), 1000)
+        if(newValue.length < this.solverParameters.numSteps.value / 2 && this.isSolving == true){
+          this.runSolver(this.lastSolverStep['t0'], this.lastSolverStep['state'], this.solverParameters.numSteps.value / 10, false)
+        }
+      },
+      deep: true
+    }
     },
     methods : {
       gyroscope(t, stateVector) { // returns dstateVector/dt
@@ -165,16 +204,7 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
           }
           return result;
       },
-      runSolver(){
-        let solution = this.rungeKutta(
-          this.gyroscope,
-          [this.computedState.theta, this.computedState.phi, this.computedState.psi, this.computedState.pTheta, this.computedState.pPhi, this.computedState.pPsi],
-          this.solverParameters.t0.value,
-          this.solverParameters.stepSize.value,
-          this.solverParameters.numSteps.value
-        )
-
-        this.solution = []
+      updateSolution(solution){
         for(let elem of solution){
           let entry = {
             theta : elem.state[0],
@@ -184,6 +214,23 @@ import gyroscopeSimulator from './components/gyroscopeSimulator'
           }
           this.solution.push(entry)
         }
+      },
+      runSolver(t0, stateVector, numSteps, clearSolution = true){
+        if(clearSolution == true){
+          this.solution = []
+        }
+
+        this.isSolving = true
+        let solution = this.rungeKutta(
+          this.gyroscope,
+          stateVector,
+          t0,
+          this.solverParameters.stepSize.value,
+          numSteps
+        )
+
+        this.lastSolverStep = solution[solution.length - 1]
+        this.updateSolution(solution)
       },
       getCartesian(theta, phi){// return cartesian coordinates from theta, phi, and psi
           let x = this.parameters.l.value * Math.cos(theta) * Math.sin(phi)

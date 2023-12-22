@@ -3,28 +3,26 @@ import { Clock } from "three";
 const clock = new Clock()
 
 class Loop {
-  constructor(camera, scene, renderer, controls) {
+  constructor(camera, scene, renderer, controls, solution) {
     this.camera = camera
     this.scene = scene
     this.renderer = renderer
     this.controls = controls
     this.updatables = []
-    this.solution = []
-    this.i = 0
+    this.solution = solution
     this.isPaused = false
     this.stepSize = 1/240
   }
 
-   start(state) {
-    this.i = 0
-    this.isPaused = false
-    let lenSolution = this.solution.length
+   start(state, paused = false) {
+    this.isPaused = paused
+
     clock.getDelta()
     this.renderer.setAnimationLoop(() => {
-      if(this.i < lenSolution && this.isPaused == false){
+      if(this.isPaused == false){
         this.tick()
       }
-      if (this.i >= lenSolution && this.isPaused == false){
+      else {
         this.Pause(state)
       }
       this.controls.update()
@@ -33,7 +31,6 @@ class Loop {
   }
 
   Pause(state) {
-    // this.renderer.setAnimationLoop(null);
     this.isPaused = true
     for(const object of this.updatables){
       object.tick(state)
@@ -44,9 +41,14 @@ class Loop {
   tick() {
     let delta = clock.getDelta()
     for (const object of this.updatables){
-      object.tick(this.solution[this.i])
+      object.tick(this.solution[0])
     }
-    this.i += Math.round(delta/this.stepSize)
+
+    for(let i = 0; i <= Math.round(delta/this.stepSize); i++){
+      this.solution.shift()
+    }
+
+    // console.log(this.solution.length)
   }
 }
 
